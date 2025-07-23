@@ -177,23 +177,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023099c717dfb4a2bb5adb72f3564e6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 8
-  height: 8
-  groundTiles:
+  Width: 8
+  Height: 8
+  GroundTiles:
   - {fileID: 11400000, guid: 83239f40991a046aca18d5fb07f123ed, type: 2}
   - {fileID: 11400000, guid: ba51f9e3934c64fd49757a3e07555d2b, type: 2}
   - {fileID: 11400000, guid: 3397ea1848b1b4911850df52a1f50fb3, type: 2}
   - {fileID: 11400000, guid: b2058d58d7b2d44019b1d2fa1fb6a43a, type: 2}
-  - {fileID: 11400000, guid: 77519af42bf864176a4678c2eb5d54b6, type: 2}
-  - {fileID: 11400000, guid: 2711adfc46982479fab464d39c65e280, type: 2}
-  - {fileID: 11400000, guid: 61427b9a120244202a322830c6f7a02a, type: 2}
-  - {fileID: 11400000, guid: 0b01b44353bb84c009463bb0d258e037, type: 2}
-  wallTiles:
+  WallTiles:
   - {fileID: 11400000, guid: 9899a13569fd149a6907bf3f09a2ee00, type: 2}
-  - {fileID: 11400000, guid: 58393854020614c73b88a7eb5899deb2, type: 2}
-  - {fileID: 11400000, guid: d87b5751d9d004c84a30da75ee8a864f, type: 2}
-  - {fileID: 11400000, guid: 5e74a01a96abc427ea0cd28be36dcdfc, type: 2}
-  - {fileID: 11400000, guid: 3b3df293327b74ed0b416fbc2f17761c, type: 2}
+  - {fileID: 11400000, guid: d2edaa8671a8044d78ff484a72d3637a, type: 2}
+  - {fileID: 11400000, guid: 9b3dc244bd5c84fdeab55b3639978436, type: 2}
+  - {fileID: 11400000, guid: 85a493eb2b9464484b973910ae346250, type: 2}
+  Player: {fileID: 1383821484145312528, guid: e35d5cb6038c741daa2083231bcfc0b9, type: 3}
 --- !u!1 &1626366630
 GameObject:
   m_ObjectHideFlags: 0

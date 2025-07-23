@@ -5,56 +5,71 @@ public class BoardManager : MonoBehaviour
 {
     public class CellData
     {
-        public bool pasable;
+        public bool Pasable;
     }
 
-    private CellData[,] boardData;
-    private Tilemap tilemap;
+    private CellData[,] m_BoardData;
+    private Grid m_Grid;
+    private Tilemap m_Tilemap;
 
-    public int width;
-    public int height;
-    public Tile[] groundTiles;
-    public Tile[] wallTiles;
+    public int Width;
+    public int Height;
+    public Tile[] GroundTiles;
+    public Tile[] WallTiles;
+    public PlayerController Player;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        tilemap = GetComponentInChildren<Tilemap>();
+        m_Grid = GetComponent<Grid>();
+        m_Tilemap = GetComponentInChildren<Tilemap>();
 
-        if (tilemap == null)
+        if (m_Grid == null)
+        {
+            Debug.LogError("Grid component not found in children.");
+            return;
+        }
+
+        if (m_Tilemap == null)
         {
             Debug.LogError("Tilemap component not found in children.");
             return;
         }
 
-        boardData = new CellData[width, height];
+        m_BoardData = new CellData[Width, Height];
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 Tile tileToPlace = null;
-                boardData[x, y] = new CellData();
-                if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+                m_BoardData[x, y] = new CellData();
+                if (x == 0 || x == Width - 1 || y == 0 || y == Height - 1)
                 {
-                    int randomIndex = Random.Range(0, wallTiles.Length);
-                    tileToPlace = wallTiles[randomIndex];
-                    boardData[x, y].pasable = false;
+                    int randomIndex = Random.Range(0, WallTiles.Length);
+                    tileToPlace = WallTiles[randomIndex];
+                    m_BoardData[x, y].Pasable = false;
                 }
                 else
                 {
-                    int randomIndex = Random.Range(0, groundTiles.Length);
-                    tileToPlace = groundTiles[randomIndex];
-                    boardData[x, y].pasable = true;
+                    int randomIndex = Random.Range(0, GroundTiles.Length);
+                    tileToPlace = GroundTiles[randomIndex];
+                    m_BoardData[x, y].Pasable = true;
                 }
-                tilemap.SetTile(new Vector3Int(x, y, 0), tileToPlace);
+                m_Tilemap.SetTile(new Vector3Int(x, y, 0), tileToPlace);
             }
         }
+        Player.Spawn(this, new Vector2Int(1, 1)); // Spawn player at (1, 1)
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public Vector3 CellToWorld(Vector2Int cellIndex)
+    {
+        return m_Grid.GetCellCenterWorld((Vector3Int)cellIndex);
     }
 }
