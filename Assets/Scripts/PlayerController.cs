@@ -9,11 +9,6 @@ public class PlayerController : MonoBehaviour
     private BoardManager m_BoardManager;
     private Vector2Int m_CellPosition;
 
-    void Start()
-    {
-
-    }
-
     void Update()
     {
         Vector2Int newCellTarget = m_CellPosition;
@@ -45,6 +40,7 @@ public class PlayerController : MonoBehaviour
             BoardManager.CellData cellData = m_BoardManager.GetCellData(newCellTarget);
             if (cellData != null && cellData.Passable)
             {
+                GameManager.Instance.TurnManager.Tick();
                 MoveTo(newCellTarget);
             }
         }

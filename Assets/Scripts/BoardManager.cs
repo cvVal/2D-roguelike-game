@@ -28,11 +28,6 @@ public class BoardManager : MonoBehaviour
     private Grid m_Grid;
     private Tilemap m_Tilemap;
 
-    void Update()
-    {
-
-    }
-
     /// <summary>
     /// Initializes board components and generates the level layout.
     /// </summary>

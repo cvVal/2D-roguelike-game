@@ -5,42 +5,31 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [Tooltip("Reference to the BoardManager that controls the game board")]
     public BoardManager Board;
 
     [Tooltip("Reference to the PlayerController that will be spawned")]
     public PlayerController Player;
 
-    private TurnManager m_TurnManager;
+    public TurnManager TurnManager { get; private set; }
+
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     void Start()
     {
-        InitializeGame();
-    }
+        TurnManager = new TurnManager();
 
-    void Update()
-    {
-
-    }
-
-    private void InitializeGame()
-    {
-        m_TurnManager = new TurnManager();
-
-        if (Board == null)
-        {
-            Debug.LogError("Board reference is null! Please assign the BoardManager in the Inspector.");
-            return;
-        }
-        
         Board.Init();
-
-        if (Player == null)
-        {
-            Debug.LogError("Player reference is null! Please assign the PlayerController in the Inspector.");
-            return;
-        }
-        
         Player.Spawn(Board, new Vector2Int(1, 1));
     }
 }
