@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// Main game controller that initializes and coordinates core game systems.
@@ -13,9 +14,13 @@ public class GameManager : MonoBehaviour
     [Tooltip("Reference to the PlayerController that will be spawned")]
     public PlayerController Player;
 
+    [Tooltip("Reference to the UI Document for game UI")]
+    public UIDocument UIDoc;
+
     public TurnManager TurnManager { get; private set; }
 
     private int m_FoodAmount = 100;
+    private Label m_FoodLabel;
 
     void Awake()
     {
@@ -34,11 +39,14 @@ public class GameManager : MonoBehaviour
 
         Board.Init();
         Player.Spawn(Board, new Vector2Int(1, 1));
+
+        m_FoodLabel = UIDoc.rootVisualElement.Q<Label>("FoodLabel");
+        m_FoodLabel.text = $"Food : {m_FoodAmount}";
     }
 
     void OnTurnHappen()
     {
         m_FoodAmount -= 1;
-        Debug.Log($"Food amount: {m_FoodAmount}");
+        m_FoodLabel.text = $"Food : {m_FoodAmount}";
     }
 }
