@@ -11,7 +11,7 @@ public class BoardManager : MonoBehaviour
     public class CellData
     {
         public bool Passable;
-        public GameObject ContainedObject;
+        public CellObject ContainedObject;
     }
 
     [Header("Board Settings")]
@@ -34,7 +34,7 @@ public class BoardManager : MonoBehaviour
     public int foodAmount = 5;
 
     [Tooltip("Prefab for food items that can be placed on the board")]
-    public GameObject[] FoodPrefabs;
+    public FoodObject[] FoodPrefabs;
 
     private CellData[,] m_BoardData;
     private Grid m_Grid;
@@ -132,8 +132,8 @@ public class BoardManager : MonoBehaviour
             CellData cellData = m_BoardData[coord.x, coord.y];
             if (cellData.Passable && cellData.ContainedObject == null)
             {
-                GameObject foodPrefab = FoodPrefabs[Random.Range(0, FoodPrefabs.Length)];
-                GameObject newFood = Instantiate(foodPrefab);
+                FoodObject foodPrefab = FoodPrefabs[Random.Range(0, FoodPrefabs.Length)];
+                FoodObject newFood = Instantiate(foodPrefab);
                 newFood.transform.position = CellToWorld(coord);
                 cellData.ContainedObject = newFood;
             }
