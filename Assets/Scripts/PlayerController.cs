@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2Int newCellTarget = m_CellPosition;
         bool hasMoved = false;
-        
+
         if (Keyboard.current.upArrowKey.wasPressedThisFrame)
         {
             newCellTarget.y += 1;
@@ -41,10 +41,14 @@ public class PlayerController : MonoBehaviour
             if (cellData != null && cellData.Passable)
             {
                 GameManager.Instance.TurnManager.Tick();
-                MoveTo(newCellTarget);
 
-                if (cellData.ContainedObject != null)
+                if (cellData.ContainedObject == null)
                 {
+                    MoveTo(newCellTarget);
+                }
+                else if (cellData.ContainedObject.PlayerWantsToEnter())
+                {
+                    MoveTo(newCellTarget);
                     cellData.ContainedObject.PlayerEntered();
                 }
             }

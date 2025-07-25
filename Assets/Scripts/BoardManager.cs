@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -28,6 +29,9 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Wall tiles for perimeter placement")]
     public Tile[] WallTiles;
 
+    [Tooltip("Prefab for wall objects that can be placed on the board")]
+    public WallObject WallPrefab;
+
     [Header("Food Settings")]
 
     [Tooltip("Amount of food items to spawn on the board")]
@@ -39,7 +43,7 @@ public class BoardManager : MonoBehaviour
     private CellData[,] m_BoardData;
     private Grid m_Grid;
     private Tilemap m_Tilemap;
-    private List<Vector2Int> m_EmptyCellList;
+    private List<Vector2Int> m_EmptyCellsList;
 
     /// <summary>
     /// Initializes board components and generates the level layout.
@@ -48,6 +52,7 @@ public class BoardManager : MonoBehaviour
     {
         InitializeComponents();
         GenerateBoard();
+        GenerateWall();
         GenerateFood();
     }
 
@@ -88,7 +93,7 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
-        m_EmptyCellList = new List<Vector2Int>();
+        m_EmptyCellsList = new List<Vector2Int>();
         m_BoardData = new CellData[Width, Height];
     }
 
@@ -111,13 +116,21 @@ public class BoardManager : MonoBehaviour
                 {
                     tileToPlace = GroundTiles[Random.Range(0, GroundTiles.Length)];
                     m_BoardData[x, y].Passable = true;
-                    m_EmptyCellList.Add(new Vector2Int(x, y)); // Track empty cells for food placement
+                    m_EmptyCellsList.Add(new Vector2Int(x, y)); // Track empty cells for food placement
                 }
 
                 m_Tilemap.SetTile(new Vector3Int(x, y, 0), tileToPlace);
             }
         }
-        m_EmptyCellList.Remove(new Vector2Int(1, 1)); // It's reserved for the player spawn
+        m_EmptyCellsList.Remove(new Vector2Int(1, 1)); // It's reserved for the player spawn
+    }
+
+    void AddObject(CellObject obj, Vector2Int coord)
+    {
+        CellData data = m_BoardData[coord.x, coord.y];
+        obj.transform.position = CellToWorld(coord);
+        data.ContainedObject = obj;
+        obj.Init(coord);
     }
 
     private void GenerateFood()
@@ -125,18 +138,34 @@ public class BoardManager : MonoBehaviour
         int foodCount = Random.Range(1, foodAmount + 1);
         for (int i = 0; i < foodCount; i++)
         {
-            int randomIndex = Random.Range(0, m_EmptyCellList.Count);
-            Vector2Int coord = m_EmptyCellList[randomIndex];
+            int randomIndex = Random.Range(0, m_EmptyCellsList.Count);
+            Vector2Int coord = m_EmptyCellsList[randomIndex];
 
-            m_EmptyCellList.RemoveAt(randomIndex); // Remove to avoid duplicates
-            CellData cellData = m_BoardData[coord.x, coord.y];
-            if (cellData.Passable && cellData.ContainedObject == null)
-            {
-                FoodObject foodPrefab = FoodPrefabs[Random.Range(0, FoodPrefabs.Length)];
-                FoodObject newFood = Instantiate(foodPrefab);
-                newFood.transform.position = CellToWorld(coord);
-                cellData.ContainedObject = newFood;
-            }
+            m_EmptyCellsList.RemoveAt(randomIndex); // Remove to avoid duplicates
+
+            FoodObject foodPrefab = FoodPrefabs[Random.Range(0, FoodPrefabs.Length)];
+            FoodObject newFood = Instantiate(foodPrefab);
+            AddObject(newFood, coord); // Initialize food with cell coordinates
         }
+    }
+
+    private void GenerateWall()
+    {
+        int wallCount = Random.Range(6, 10);
+        for (int i = 0; i < wallCount; i++)
+        {
+            int randomIndex = Random.Range(0, m_EmptyCellsList.Count);
+            Vector2Int coord = m_EmptyCellsList[randomIndex];
+
+            m_EmptyCellsList.RemoveAt(randomIndex);
+
+            WallObject newWall = Instantiate(WallPrefab);
+            AddObject(newWall, coord); // Initialize wall with cell coordinates
+        }
+    }
+
+    public void SetCellTile(Vector2Int cellIndex, Tile tile)
+    {
+        m_Tilemap.SetTile(new Vector3Int(cellIndex.x, cellIndex.y, 0), tile);
     }
 }

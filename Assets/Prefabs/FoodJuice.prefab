@@ -100,3 +100,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02cbe47a5eb142c6b50c8d6e5cf706e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NutritionValue: 10
