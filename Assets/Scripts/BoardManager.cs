@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,23 +11,35 @@ public class BoardManager : MonoBehaviour
     public class CellData
     {
         public bool Passable;
+        public GameObject ContainedObject;
     }
+
+    [Header("Board Settings")]
 
     [Tooltip("Width of the board in grid cells")]
     public int Width;
-    
+
     [Tooltip("Height of the board in grid cells")]
     public int Height;
-    
+
     [Tooltip("Ground tiles for interior placement")]
     public Tile[] GroundTiles;
-    
+
     [Tooltip("Wall tiles for perimeter placement")]
     public Tile[] WallTiles;
+
+    [Header("Food Settings")]
+
+    [Tooltip("Amount of food items to spawn on the board")]
+    public int foodAmount = 5;
+
+    [Tooltip("Prefab for food items that can be placed on the board")]
+    public GameObject[] FoodPrefabs;
 
     private CellData[,] m_BoardData;
     private Grid m_Grid;
     private Tilemap m_Tilemap;
+    private List<Vector2Int> m_EmptyCellList;
 
     /// <summary>
     /// Initializes board components and generates the level layout.
@@ -35,6 +48,7 @@ public class BoardManager : MonoBehaviour
     {
         InitializeComponents();
         GenerateBoard();
+        GenerateFood();
     }
 
     /// <summary>
@@ -47,12 +61,13 @@ public class BoardManager : MonoBehaviour
 
     /// <summary>
     /// Gets cell data with bounds checking.
+    /// Used by PlayerController for movement validation.
     /// </summary>
     public CellData GetCellData(Vector2Int cellIndex)
     {
         if (cellIndex.x < 0 || cellIndex.x >= Width || cellIndex.y < 0 || cellIndex.y >= Height)
             return null;
-            
+
         return m_BoardData[cellIndex.x, cellIndex.y];
     }
 
@@ -73,6 +88,7 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
+        m_EmptyCellList = new List<Vector2Int>();
         m_BoardData = new CellData[Width, Height];
     }
 
@@ -95,9 +111,31 @@ public class BoardManager : MonoBehaviour
                 {
                     tileToPlace = GroundTiles[Random.Range(0, GroundTiles.Length)];
                     m_BoardData[x, y].Passable = true;
+                    m_EmptyCellList.Add(new Vector2Int(x, y)); // Track empty cells for food placement
                 }
 
                 m_Tilemap.SetTile(new Vector3Int(x, y, 0), tileToPlace);
+            }
+        }
+        m_EmptyCellList.Remove(new Vector2Int(1, 1)); // It's reserved for the player spawn
+    }
+
+    private void GenerateFood()
+    {
+        int foodCount = Random.Range(1, foodAmount + 1);
+        for (int i = 0; i < foodCount; i++)
+        {
+            int randomIndex = Random.Range(0, m_EmptyCellList.Count);
+            Vector2Int coord = m_EmptyCellList[randomIndex];
+
+            m_EmptyCellList.RemoveAt(randomIndex); // Remove to avoid duplicates
+            CellData cellData = m_BoardData[coord.x, coord.y];
+            if (cellData.Passable && cellData.ContainedObject == null)
+            {
+                GameObject foodPrefab = FoodPrefabs[Random.Range(0, FoodPrefabs.Length)];
+                GameObject newFood = Instantiate(foodPrefab);
+                newFood.transform.position = CellToWorld(coord);
+                cellData.ContainedObject = newFood;
             }
         }
     }
