@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     public TurnManager TurnManager { get; private set; }
 
+    private int m_FoodAmount = 100;
+
     void Awake()
     {
         if (Instance != null)
@@ -28,8 +30,15 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         TurnManager = new TurnManager();
+        TurnManager.OnTick += OnTurnHappen;
 
         Board.Init();
         Player.Spawn(Board, new Vector2Int(1, 1));
+    }
+
+    void OnTurnHappen()
+    {
+        m_FoodAmount -= 1;
+        Debug.Log($"Food amount: {m_FoodAmount}");
     }
 }
