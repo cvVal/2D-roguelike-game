@@ -19,9 +19,11 @@ public class GameManager : MonoBehaviour
 
     public TurnManager TurnManager { get; private set; }
 
-    private int m_FoodAmount = 100;
-    private Label m_FoodLabel;
+    private int m_FoodAmount = 20;
     private int m_CurrentLevel = 1;
+    private Label m_FoodLabel;
+    private VisualElement m_GameOverPanel;
+    private Label m_GameOverMessage;
 
     void Awake()
     {
@@ -38,10 +40,13 @@ public class GameManager : MonoBehaviour
         TurnManager = new TurnManager();
         TurnManager.OnTick += OnTurnHappen;
 
-       NewLevel();
-
         m_FoodLabel = UIDoc.rootVisualElement.Q<Label>("FoodLabel");
         m_FoodLabel.text = $"Food : {m_FoodAmount}";
+
+        m_GameOverPanel = UIDoc.rootVisualElement.Q<VisualElement>("GameOverPanel");
+        m_GameOverMessage = UIDoc.rootVisualElement.Q<Label>("GameOverMessage");
+
+        StartNewGame();
     }
 
     void OnTurnHappen()
@@ -53,6 +58,14 @@ public class GameManager : MonoBehaviour
     {
         m_FoodAmount += amount;
         m_FoodLabel.text = $"Food : {m_FoodAmount}";
+
+        if (m_FoodAmount <= 0)
+        {
+            Player.GameOver();
+            m_GameOverPanel.style.visibility = Visibility.Visible;
+            m_GameOverMessage.text = $"Game Over! \n\nYou ran out of food " +
+                $"\n\nYou survived {m_CurrentLevel} days \n\nPress Enter to restart";
+        }
     }
 
     public void NewLevel()
@@ -62,5 +75,20 @@ public class GameManager : MonoBehaviour
         Player.Spawn(BoardManager, new Vector2Int(1, 1));
 
         m_CurrentLevel++;
+    }
+
+    public void StartNewGame()
+    {
+        m_GameOverPanel.style.visibility = Visibility.Hidden;
+
+        m_FoodAmount = 20;
+        m_CurrentLevel = 1;
+        m_FoodLabel.text = $"Food : {m_FoodAmount}";
+
+        BoardManager.ClearAllCellContents();
+        BoardManager.Init();
+
+        Player.Init();
+        Player.Spawn(BoardManager, new Vector2Int(1, 1));
     }
 }

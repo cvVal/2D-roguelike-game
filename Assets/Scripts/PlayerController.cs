@@ -8,9 +8,25 @@ public class PlayerController : MonoBehaviour
 {
     private BoardManager m_BoardManager;
     private Vector2Int m_CellPosition;
+    private bool m_IsGameOver;
+
+    public void Init()
+    {
+        m_IsGameOver = false;
+    }
 
     void Update()
     {
+        if (m_IsGameOver)
+        {
+            if (Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                GameManager.Instance.StartNewGame();
+            }
+
+            return;
+        }
+
         Vector2Int newCellTarget = m_CellPosition;
         bool hasMoved = false;
 
@@ -71,5 +87,10 @@ public class PlayerController : MonoBehaviour
     {
         m_CellPosition = cell;
         transform.position = m_BoardManager.CellToWorld(m_CellPosition);
+    }
+
+    public void GameOver()
+    {
+        m_IsGameOver = true;
     }
 }
