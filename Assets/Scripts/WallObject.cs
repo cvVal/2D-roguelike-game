@@ -4,6 +4,7 @@ using UnityEngine.Tilemaps;
 public class WallObject : CellObject
 {
     public Tile ObstacleTile;
+    public Tile DamagedTile;
     public int MaxHealth = 3;
 
     private int m_HealthPoint;
@@ -21,13 +22,21 @@ public class WallObject : CellObject
     public override bool PlayerWantsToEnter()
     {
         m_HealthPoint -= 1;
-        if (m_HealthPoint > 0)
+        
+        // Show damaged state when at half health (but only once)
+        if (m_HealthPoint == MaxHealth / 2)
         {
-            return false;
+            GameManager.Instance.BoardManager.SetCellTile(m_cell, DamagedTile);
+        }
+        
+        // Wall is destroyed
+        if (m_HealthPoint <= 0)
+        {
+            GameManager.Instance.BoardManager.SetCellTile(m_cell, m_OriginalTile);
+            Destroy(gameObject);
+            return true; // Player can now enter this cell
         }
 
-        GameManager.Instance.BoardManager.SetCellTile(m_cell, m_OriginalTile);
-        Destroy(gameObject);
-        return true;
+        return false; // Wall still blocks player
     }
 }

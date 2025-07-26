@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3893405521289399300
+--- !u!1 &184305670528821056
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7835184526356666469}
-  - component: {fileID: 2081453713675104107}
+  - component: {fileID: 5985668993914647327}
+  - component: {fileID: 8748265650250396360}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: WallHard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7835184526356666469
+--- !u!4 &5985668993914647327
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3893405521289399300}
+  m_GameObject: {fileID: 184305670528821056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0528963, y: 3.6433392, z: 0.030190257}
+  m_LocalPosition: {x: 2.0722754, y: 3.6385107, z: 0.030400176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2081453713675104107
+--- !u!114 &8748265650250396360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3893405521289399300}
+  m_GameObject: {fileID: 184305670528821056}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77768cfdc789648998abd29093e45a19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObstacleTile: {fileID: 11400000, guid: c0ed1a5216c844359b01566c0514b79d, type: 2}
+  ObstacleTile: {fileID: 11400000, guid: 58393854020614c73b88a7eb5899deb2, type: 2}
+  DamagedTile: {fileID: 11400000, guid: 3b3df293327b74ed0b416fbc2f17761c, type: 2}
+  MaxHealth: 6

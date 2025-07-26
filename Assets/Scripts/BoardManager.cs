@@ -30,7 +30,7 @@ public class BoardManager : MonoBehaviour
     public Tile[] WallTiles;
 
     [Tooltip("Prefab for wall objects that can be placed on the board")]
-    public WallObject WallPrefab;
+    public WallObject[] WallPrefabs;
 
     [Header("Food Settings")]
 
@@ -159,7 +159,7 @@ public class BoardManager : MonoBehaviour
 
             m_EmptyCellsList.RemoveAt(randomIndex);
 
-            WallObject newWall = Instantiate(WallPrefab);
+            WallObject newWall = Instantiate(WallPrefabs[Random.Range(0, WallPrefabs.Length)]);
             AddObject(newWall, coord); // Initialize wall with cell coordinates
         }
     }
