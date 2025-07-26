@@ -340,6 +340,7 @@ MonoBehaviour:
   - {fileID: 2081453713675104107, guid: eb295d382d67d41faa4e2cce92c4343b, type: 3}
   - {fileID: 3655130234095501876, guid: cc123848640324dee8911446dba40d3c, type: 3}
   - {fileID: 8748265650250396360, guid: 937213cbec62345da82d10b451d00ea5, type: 3}
+  ExitPrefab: {fileID: 8920698719351303125, guid: ebde639f002024f979b040314393159d, type: 3}
   foodAmount: 5
   FoodPrefabs:
   - {fileID: -1572896320814529811, guid: 5978a60c3a78945dda45be2d393e5a88, type: 3}

@@ -32,6 +32,9 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Prefab for wall objects that can be placed on the board")]
     public WallObject[] WallPrefabs;
 
+    [Tooltip("Prefab for exit cell that allows players to finish the level")]
+    public ExitCellObject ExitPrefab;
+
     [Header("Food Settings")]
 
     [Tooltip("Amount of food items to spawn on the board")]
@@ -52,6 +55,7 @@ public class BoardManager : MonoBehaviour
     {
         InitializeComponents();
         GenerateBoard();
+        GenerateExit();
         GenerateWall();
         GenerateFood();
     }
@@ -164,6 +168,13 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    private void GenerateExit()
+    {
+        Vector2Int exitCoord = new(Width - 2, Height - 2);
+        AddObject(Instantiate(ExitPrefab), exitCoord);
+        m_EmptyCellsList.Remove(exitCoord);
+    }
+
     public void SetCellTile(Vector2Int cellIndex, Tile tile)
     {
         m_Tilemap.SetTile(new Vector3Int(cellIndex.x, cellIndex.y, 0), tile);
@@ -172,5 +183,28 @@ public class BoardManager : MonoBehaviour
     public Tile GetCellTile(Vector2Int cellIndex)
     {
         return m_Tilemap.GetTile<Tile>(new Vector3Int(cellIndex.x, cellIndex.y, 0));
+    }
+
+    public void ClearAllCellContents()
+    {
+        if (m_BoardData == null) return;
+
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                var cellData = m_BoardData[x, y];
+
+                if (cellData.ContainedObject != null)
+                {
+                    //CAREFUL! Destroy the GameObject NOT just cellData.ContainedObject
+                    //Otherwise what you are destroying is the JUST CellObject COMPONENT
+                    //and not the whole gameobject with sprite
+                    Destroy(cellData.ContainedObject.gameObject);
+                }
+
+                SetCellTile(new Vector2Int(x, y), null);
+            }
+        }
     }
 }
