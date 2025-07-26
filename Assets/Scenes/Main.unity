@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4419b54ad994e9aba54a3ab373f3c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Board: {fileID: 561182567}
+  BoardManager: {fileID: 561182567}
   Player: {fileID: 267275469}
   UIDoc: {fileID: 1903259003}
 --- !u!1 &561182564

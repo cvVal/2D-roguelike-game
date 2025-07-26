@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Tooltip("Reference to the BoardManager that controls the game board")]
-    public BoardManager Board;
+    public BoardManager BoardManager;
 
     [Tooltip("Reference to the PlayerController that will be spawned")]
     public PlayerController Player;
@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
         TurnManager = new TurnManager();
         TurnManager.OnTick += OnTurnHappen;
 
-        Board.Init();
-        Player.Spawn(Board, new Vector2Int(1, 1));
+        BoardManager.Init();
+        Player.Spawn(BoardManager, new Vector2Int(1, 1));
 
         m_FoodLabel = UIDoc.rootVisualElement.Q<Label>("FoodLabel");
         m_FoodLabel.text = $"Food : {m_FoodAmount}";
