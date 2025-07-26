@@ -35,6 +35,9 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Prefab for exit cell that allows players to finish the level")]
     public ExitCellObject ExitPrefab;
 
+    [Tooltip("Prefab for enemy objects that can be placed on the board")]
+    public EnemyObject EnemyPrefab;
+
     [Header("Food Settings")]
 
     [Tooltip("Amount of food items to spawn on the board")]
@@ -56,6 +59,7 @@ public class BoardManager : MonoBehaviour
         InitializeComponents();
         GenerateBoard();
         GenerateExit();
+        GenerateEnemy();
         GenerateWall();
         GenerateFood();
     }
@@ -173,6 +177,13 @@ public class BoardManager : MonoBehaviour
         Vector2Int exitCoord = new(Width - 2, Height - 2);
         AddObject(Instantiate(ExitPrefab), exitCoord);
         m_EmptyCellsList.Remove(exitCoord);
+    }
+
+    private void GenerateEnemy()
+    {
+        Vector2Int enemyCoord = new(Width - 3, Height - 3);
+        AddObject(Instantiate(EnemyPrefab), enemyCoord);
+        m_EmptyCellsList.Remove(enemyCoord);
     }
 
     public void SetCellTile(Vector2Int cellIndex, Tile tile)

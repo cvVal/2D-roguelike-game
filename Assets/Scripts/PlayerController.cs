@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
+    public Vector2Int CurrentCell;
+
     private BoardManager m_BoardManager;
     private Vector2Int m_CellPosition;
     private bool m_IsGameOver;
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour
             if (cellData != null && cellData.Passable)
             {
                 GameManager.Instance.TurnManager.Tick();
+                CurrentCell = newCellTarget;
 
                 if (cellData.ContainedObject == null)
                 {
@@ -73,8 +76,9 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     // Check if this is an attackable object (wall, enemy, etc.)
-                    bool isAttackable = cellData.ContainedObject is WallObject;
-                    
+                    bool isAttackable = cellData.ContainedObject is WallObject
+                        || cellData.ContainedObject is EnemyObject;
+
                     if (isAttackable)
                     {
                         StartCoroutine(AttackSequence(cellData.ContainedObject, newCellTarget));
