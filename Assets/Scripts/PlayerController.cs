@@ -66,11 +66,12 @@ public class PlayerController : MonoBehaviour
             BoardManager.CellData cellData = m_BoardManager.GetCellData(newCellTarget);
             if (cellData != null && cellData.Passable)
             {
-                GameManager.Instance.TurnManager.Tick();
+                bool playerActed = false;
 
                 if (cellData.ContainedObject == null)
                 {
                     MoveTo(newCellTarget);
+                    playerActed = true;
                 }
                 else
                 {
@@ -80,6 +81,7 @@ public class PlayerController : MonoBehaviour
 
                     if (isAttackable)
                     {
+                        // Attack handles its own turn advancement
                         StartCoroutine(AttackSequence(cellData.ContainedObject, newCellTarget));
                     }
                     else
@@ -89,8 +91,15 @@ public class PlayerController : MonoBehaviour
                         {
                             MoveTo(newCellTarget);
                             cellData.ContainedObject.PlayerEntered();
+                            playerActed = true;
                         }
                     }
+                }
+
+                // Only advance turn for non-attack actions (attacks handle their own turn advancement)
+                if (playerActed)
+                {
+                    GameManager.Instance.TurnManager.Tick();
                 }
             }
         }
@@ -145,5 +154,8 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         m_IsAttacking = false;
+        
+        // Advance turn after attack is completely finished
+        GameManager.Instance.TurnManager.Tick();
     }
 }

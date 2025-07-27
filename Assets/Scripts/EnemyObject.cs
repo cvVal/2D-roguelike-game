@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Enemy AI that uses Manhattan distance pathfinding to chase the player.
+/// Uses greedy algorithm: always moves toward player in the direction with the largest gap.
+/// Movement priority: larger distance gets priority, with fallback to secondary direction if blocked.
+/// </summary>
 public class EnemyObject : CellObject
 {
     public int Health = 3;
@@ -87,6 +92,14 @@ public class EnemyObject : CellObject
         return MoveTo(m_cell + Vector2Int.down);
     }
 
+    /// <summary>
+    /// Core AI behavior triggered each turn. Uses Manhattan distance to chase player.
+    /// Movement Algorithm:
+    /// 1. Calculate X and Y distances to player
+    /// 2. Check if adjacent (attack range)
+    /// 3. Move toward player in direction with largest distance gap
+    /// 4. If primary direction blocked, try secondary direction
+    /// </summary>
     private void TurnHappened()
     {
         // Skip turn if enemy is dead or being destroyed
@@ -109,18 +122,21 @@ public class EnemyObject : CellObject
         }
         else
         {
+            // Manhattan pathfinding: move in direction with largest distance gap
             if (absXDist > absYDist)
             {
+                // Horizontal gap is larger, then prioritize X movement
                 if (!TryMoveInX(xDist))
                 {
-                    TryMoveInY(yDist);
+                    TryMoveInY(yDist);  // Fallback to Y if X blocked
                 }
             }
             else
             {
+                // Vertical gap is larger (or equal), then prioritize Y movement
                 if (!TryMoveInY(yDist))
                 {
-                    TryMoveInX(xDist);
+                    TryMoveInX(xDist);  // Fallback to X if Y blocked
                 }
             }
         }
