@@ -7,13 +7,13 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
-    public Vector2Int CurrentCell;
-
     private BoardManager m_BoardManager;
     private Vector2Int m_CellPosition;
     private bool m_IsGameOver;
     private Animator m_Animator;
     private bool m_IsAttacking;
+
+    public Vector2Int CurrentCell => m_CellPosition;
 
     public void Init()
     {
@@ -67,7 +67,6 @@ public class PlayerController : MonoBehaviour
             if (cellData != null && cellData.Passable)
             {
                 GameManager.Instance.TurnManager.Tick();
-                CurrentCell = newCellTarget;
 
                 if (cellData.ContainedObject == null)
                 {

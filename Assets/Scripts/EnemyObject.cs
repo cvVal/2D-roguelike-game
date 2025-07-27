@@ -5,10 +5,12 @@ public class EnemyObject : CellObject
 {
     public int Health = 3;
     private int m_CurrentHealth;
+    private Animator m_Animator;
 
     void Awake()
     {
         GameManager.Instance.TurnManager.OnTick += TurnHappened;
+        m_Animator = GetComponent<Animator>();
     }
 
     private void OnDestroy()
@@ -27,7 +29,7 @@ public class EnemyObject : CellObject
         m_CurrentHealth -= 1;
         Debug.Log($"Enemy hit! Remaining health: {m_CurrentHealth}");
 
-        if (Health <= 0)
+        if (m_CurrentHealth <= 0)
         {
             Destroy(gameObject);
         }
@@ -42,7 +44,6 @@ public class EnemyObject : CellObject
 
         if (targetCell == null || !targetCell.Passable || targetCell.ContainedObject != null)
         {
-            Debug.Log("Enemy cannot move to the target cell.");
             return false;
         }
 
@@ -54,7 +55,6 @@ public class EnemyObject : CellObject
         targetCell.ContainedObject = this;
         m_cell = coord;
         transform.position = board.CellToWorld(coord);
-        Debug.Log($"Enemy moved to {coord}");
 
         return true;
     }
@@ -89,6 +89,10 @@ public class EnemyObject : CellObject
 
     private void TurnHappened()
     {
+        // Skip turn if enemy is dead or being destroyed
+        if (m_CurrentHealth <= 0 || this == null)
+            return;
+            
         var playerCell = GameManager.Instance.Player.CurrentCell;
 
         int xDist = playerCell.x - m_cell.x;
@@ -100,6 +104,7 @@ public class EnemyObject : CellObject
         if ((xDist == 0 && absYDist == 1) || (yDist == 0 && absXDist == 1))
         {
             // Player is adjacent, attack!
+            m_Animator.SetTrigger("EnemyAttack");
             GameManager.Instance.ChangeFoodAmount(-3);
         }
         else
