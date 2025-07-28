@@ -70,11 +70,11 @@ public class GameManager : MonoBehaviour
 
     public void NewLevel()
     {
-        BoardManager.ClearAllCellContents();
-        BoardManager.Init();
-        Player.Spawn(BoardManager, new Vector2Int(1, 1));
-
         m_CurrentLevel++;
+
+        BoardManager.ClearAllCellContents();
+        BoardManager.Init(m_CurrentLevel);
+        Player.Spawn(BoardManager, new Vector2Int(1, 1));
     }
 
     public void StartNewGame()
@@ -82,11 +82,10 @@ public class GameManager : MonoBehaviour
         m_GameOverPanel.style.visibility = Visibility.Hidden;
 
         m_FoodAmount = 20;
-        m_CurrentLevel = 1;
         m_FoodLabel.text = $"Food : {m_FoodAmount}";
 
         BoardManager.ClearAllCellContents();
-        BoardManager.Init();
+        BoardManager.Init(m_CurrentLevel);
 
         Player.Init();
         Player.Spawn(BoardManager, new Vector2Int(1, 1));
