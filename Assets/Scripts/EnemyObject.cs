@@ -9,13 +9,17 @@ using UnityEngine;
 public class EnemyObject : CellObject
 {
     public int Health = 3;
+    public int DamageAmount = -1;
     private int m_CurrentHealth;
     private Animator m_Animator;
+    private AudioSource m_AudioSource;
+    public AudioClip AttackSound;
 
     void Awake()
     {
         GameManager.Instance.TurnManager.OnTick += TurnHappened;
         m_Animator = GetComponent<Animator>();
+        m_AudioSource = GetComponent<AudioSource>();
     }
 
     private void OnDestroy()
@@ -118,7 +122,10 @@ public class EnemyObject : CellObject
         {
             // Player is adjacent, attack!
             m_Animator.SetTrigger("EnemyAttack");
-            GameManager.Instance.ChangeFoodAmount(-3);
+            m_AudioSource.PlayOneShot(AttackSound);
+
+            GameManager.Instance.Player.Damaged();
+            GameManager.Instance.ChangeFoodAmount(DamageAmount);
         }
         else
         {

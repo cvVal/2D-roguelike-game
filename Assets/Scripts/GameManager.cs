@@ -84,6 +84,8 @@ public class GameManager : MonoBehaviour
         m_FoodAmount = 20;
         m_FoodLabel.text = $"Food : {m_FoodAmount}";
 
+        m_CurrentLevel = 1;
+
         BoardManager.ClearAllCellContents();
         BoardManager.Init(m_CurrentLevel);
 

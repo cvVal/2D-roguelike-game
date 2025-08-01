@@ -39,6 +39,10 @@ public class BoardManager : MonoBehaviour
         public int WallDivisor = 20;    // boardArea / wallDivisor = wall amount  
         public int MinWalls = 2;
 
+        [Header("Traps and Hazards")]
+        public int MinTraps = 0;
+        public int MaxTraps = 0;
+
         [Header("Camera Settings")]
         public float CameraLensSize = 3f; // Cinemachine lens orthographic size
     }
@@ -47,20 +51,46 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     private LevelConfig[] levelConfigs = new LevelConfig[]
     {
-        new LevelConfig { BoardWidth = 8, BoardHeight = 8, MinEnemies = 0, MaxEnemies = 0,
-                         FoodDivisor = 8, MinFood = 4, WallDivisor = 20, MinWalls = 2 },
-        
-        new LevelConfig { BoardWidth = 10, BoardHeight = 10, MinEnemies = 1, MaxEnemies = 1, IsEnemyPositionFixed = true,
-                         FoodDivisor = 12, MinFood = 3, WallDivisor = 15, MinWalls = 4 },
-        
-        new LevelConfig { BoardWidth = 12, BoardHeight = 12, MinEnemies = 2, MaxEnemies = 4,
-                         FoodDivisor = 16, MinFood = 2, WallDivisor = 12, MinWalls = 6, CameraLensSize = 3.5f },
-        
-        new LevelConfig { BoardWidth = 14, BoardHeight = 14, MinEnemies = 3, MaxEnemies = 6,
-                         FoodDivisor = 20, MinFood = 3, WallDivisor = 10, MinWalls = 8, CameraLensSize = 4.0f },
-        
-        new LevelConfig { BoardWidth = 16, BoardHeight = 16, MinEnemies = 5, MaxEnemies = 9,
-                         FoodDivisor = 20, MinFood = 3, WallDivisor = 10, MinWalls = 8, CameraLensSize = 4.5f }
+        new LevelConfig {
+            BoardWidth = 8, BoardHeight = 8,
+            MinEnemies = 0, MaxEnemies = 0,
+            FoodDivisor = 8, MinFood = 4,
+            WallDivisor = 20, MinWalls = 2
+        },
+
+        new LevelConfig {
+            BoardWidth = 10, BoardHeight = 10,
+            MinEnemies = 1, MaxEnemies = 1, IsEnemyPositionFixed = true,
+            FoodDivisor = 12, MinFood = 3,
+            WallDivisor = 15, MinWalls = 4
+        },
+
+        new LevelConfig {
+            BoardWidth = 12, BoardHeight = 12,
+            MinEnemies = 2, MaxEnemies = 4,
+            FoodDivisor = 16, MinFood = 2,
+            WallDivisor = 12, MinWalls = 6,
+            MinTraps = 2, MaxTraps = 4,
+            CameraLensSize = 3.5f
+        },
+
+        new LevelConfig {
+            BoardWidth = 14, BoardHeight = 14,
+            MinEnemies = 3, MaxEnemies = 6,
+            FoodDivisor = 20, MinFood = 3,
+            WallDivisor = 10, MinWalls = 8,
+            MinTraps = 3, MaxTraps = 5,
+            CameraLensSize = 4.0f
+        },
+
+        new LevelConfig {
+            BoardWidth = 16, BoardHeight = 16,
+            MinEnemies = 5, MaxEnemies = 9,
+            FoodDivisor = 20, MinFood = 3,
+            WallDivisor = 10, MinWalls = 8,
+            MinTraps = 5, MaxTraps = 8,
+            CameraLensSize = 4.5f
+        }
     };
 
     [Header("Board Settings")]
@@ -84,7 +114,7 @@ public class BoardManager : MonoBehaviour
     public ExitCellObject ExitPrefab;
 
     [Tooltip("Prefab for enemy objects that can be placed on the board")]
-    public EnemyObject EnemyPrefab;
+    public EnemyObject[] EnemyPrefabs;
 
     [Header("Food Settings")]
 
@@ -93,6 +123,10 @@ public class BoardManager : MonoBehaviour
 
     [Tooltip("Prefab for food items that can be placed on the board")]
     public FoodObject[] FoodPrefabs;
+
+    [Header("Trap Settings")]
+    [Tooltip("Prefab for trap objects that can be placed on the board")]
+    public TrapObject[] TrapPrefabs;
 
     [Header("Camera Settings")]
 
@@ -129,6 +163,7 @@ public class BoardManager : MonoBehaviour
         GenerateEnemy(currentLevel);
         GenerateWall(currentLevel);
         GenerateFood(currentLevel);
+        GenerateTrap(currentLevel);
     }
 
     /// <summary>
@@ -248,6 +283,29 @@ public class BoardManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Generates traps with progressive density using level configuration.
+    /// </summary>
+    private void GenerateTrap(int currentLevel)
+    {
+        int trapCount = Random.Range(m_CurrentLevelConfig.MinTraps, m_CurrentLevelConfig.MaxTraps + 1);
+
+        if (trapCount == 0) return; // No traps for early levels
+
+        for (int i = 0; i < trapCount; i++)
+        {
+            if (m_EmptyCellsList.Count == 0) break; // Safety check
+
+            int randomIndex = Random.Range(0, m_EmptyCellsList.Count);
+            Vector2Int coord = m_EmptyCellsList[randomIndex];
+
+            m_EmptyCellsList.RemoveAt(randomIndex);
+
+            TrapObject newTrap = Instantiate(TrapPrefabs[Random.Range(0, TrapPrefabs.Length)]);
+            AddObject(newTrap, coord); // Initialize trap with cell coordinates
+        }
+    }
+
+    /// <summary>
     /// Generates destructible walls with progressive density using level configuration.
     /// </summary>
     private void GenerateWall(int currentLevel)
@@ -304,7 +362,7 @@ public class BoardManager : MonoBehaviour
 
     private void SpawnEnemyAt(Vector2Int coord)
     {
-        AddObject(Instantiate(EnemyPrefab), coord);
+        AddObject(Instantiate(EnemyPrefabs[0]), coord);
         m_EmptyCellsList.Remove(coord);
     }
 
@@ -318,7 +376,8 @@ public class BoardManager : MonoBehaviour
             Vector2Int enemyCoord = m_EmptyCellsList[randomIndex];
 
             m_EmptyCellsList.RemoveAt(randomIndex);
-            AddObject(Instantiate(EnemyPrefab), enemyCoord);
+            EnemyObject newEnemy = Instantiate(EnemyPrefabs[Random.Range(0, EnemyPrefabs.Length)]);
+            AddObject(newEnemy, enemyCoord);
         }
     }
 

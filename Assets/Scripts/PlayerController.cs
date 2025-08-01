@@ -15,11 +15,20 @@ public class PlayerController : MonoBehaviour
 
     public Vector2Int CurrentCell => m_CellPosition;
 
+    private AudioSource m_AudioSource;
+    public AudioClip AttackSound;
+    public AudioClip DamagedSound;
+
     public void Init()
     {
         m_IsGameOver = false;
         m_IsAttacking = false;
         m_Animator = GetComponent<Animator>();
+    }
+
+    void Awake()
+    {
+        m_AudioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -59,6 +68,11 @@ public class PlayerController : MonoBehaviour
         {
             newCellTarget.x += 1;
             hasMoved = true;
+        }
+        else if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            hasMoved = false;
+            GameManager.Instance.TurnManager.Tick(); // Just advance turn without moving
         }
 
         if (hasMoved)
@@ -128,6 +142,12 @@ public class PlayerController : MonoBehaviour
         m_IsGameOver = true;
     }
 
+    public void Damaged()
+    {
+        m_Animator.SetTrigger("Damaged");
+        m_AudioSource.PlayOneShot(DamagedSound);
+    }
+
     /// <summary>
     /// Handles attack sequence with proper timing to prevent visual glitches.
     /// </summary>
@@ -139,6 +159,7 @@ public class PlayerController : MonoBehaviour
         {
             m_Animator.SetTrigger("Attack");
         }
+        m_AudioSource.PlayOneShot(AttackSound);
 
         // Wait for a brief moment to let animation start
         yield return new WaitForSeconds(0.3f);
@@ -154,7 +175,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         m_IsAttacking = false;
-        
+
         // Advance turn after attack is completely finished
         GameManager.Instance.TurnManager.Tick();
     }
